@@ -1,3 +1,4 @@
+
 require "test_helper"
 
 class TodosControllerTest < ActionDispatch::IntegrationTest
@@ -33,7 +34,9 @@ class TodosControllerTest < ActionDispatch::IntegrationTest
 
   test "should create todo" do
     assert_difference("Todo.count") do
-      post todos_url, params: { todo: { title: "New todo", description: "Details", status: "pending" } }
+      post todos_url, params: {
+        todo: { title: "New todo", description: "Details", status: "pending" }
+      }
     end
 
     assert_redirected_to todos_url
@@ -48,8 +51,10 @@ class TodosControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test "should create todo owned by the current user only" do
-    post todos_url, params: { todo: { title: "Scoped todo", status: "pending" } }
+  test "should create todo owned by current user only" do
+    post todos_url, params: {
+      todo: { title: "Scoped todo", status: "pending" }
+    }
 
     assert_equal @user, Todo.find_by(title: "Scoped todo").user
   end
@@ -65,7 +70,9 @@ class TodosControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update own todo" do
-    patch todo_url(@todo), params: { todo: { title: "Updated title", status: "completed" } }
+    patch todo_url(@todo), params: {
+      todo: { title: "Updated title", status: "completed" }
+    }
 
     assert_redirected_to todos_url
     @todo.reload
@@ -81,12 +88,62 @@ class TodosControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not update another user's todo" do
-    assert_no_difference("Todo.count") do
-      patch todo_url(@other_user_todo), params: { todo: { title: "Hacked" } }
-    end
+    patch todo_url(@other_user_todo), params: {
+      todo: { title: "Hacked" }
+    }
 
     assert_response :not_found
     assert_not_equal "Hacked", @other_user_todo.reload.title
+  end
+
+  test "should complete own todo" do
+    patch complete_todo_url(@todo)
+
+    assert_redirected_to todos_url
+    assert_equal "completed", @todo.reload.status
+  end
+
+  test "should cancel own todo" do
+    patch cancel_todo_url(@todo)
+
+    assert_redirected_to todos_url
+    assert_equal "cancelled", @todo.reload.status
+  end
+
+  test "should restore own todo to pending" do
+    @todo.update!(status: "completed")
+
+    patch restore_todo_url(@todo)
+
+    assert_redirected_to todos_url
+    assert_equal "pending", @todo.reload.status
+  end
+
+  test "should not complete another user's todo" do
+    @other_user_todo.update!(status: "pending")
+
+    patch complete_todo_url(@other_user_todo)
+
+    assert_response :not_found
+    assert_equal "pending", @other_user_todo.reload.status
+  end
+
+  test "should not cancel another user's todo" do
+    @other_user_todo.update!(status: "pending")
+
+    patch cancel_todo_url(@other_user_todo)
+
+    assert_response :not_found
+    assert_equal "pending", @other_user_todo.reload.status
+  end
+
+  test "should not restore another user's todo" do
+    @other_user_todo.update!(status: "completed")
+
+    patch restore_todo_url(@other_user_todo)
+
+    assert_response :not_found
+    assert_equal "completed", @other_user_todo.reload.status
   end
 
   test "should destroy own todo" do

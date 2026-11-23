@@ -1,14 +1,40 @@
+
 <h1>My Todos</h1>
 
 <%= link_to "New Todo", new_todo_path %>
 
-<% @todos.each do |todo| %>
+<h2>Pending</h2>
+<% @pending_todos.each do |todo| %>
   <div>
     <h3><%= link_to todo.title, todo_path(todo) %></h3>
     <p><%= todo.description %></p>
-    <p><%= todo.status %></p>
+    <span>Pending</span>
 
+    <%= button_to "Complete", complete_todo_path(todo), method: :patch %>
+    <%= button_to "Cancel", cancel_todo_path(todo), method: :patch %>
     <%= link_to "Edit", edit_todo_path(todo) %>
     <%= button_to "Delete", todo_path(todo), method: :delete %>
+  </div>
+<% end %>
+
+<h2>Completed</h2>
+<% @completed_todos.each do |todo| %>
+  <div>
+    <h3><%= link_to todo.title, todo_path(todo) %></h3>
+    <p><%= todo.description %></p>
+    <span>Completed</span>
+
+    <%= button_to "Restore", restore_todo_path(todo), method: :patch %>
+  </div>
+<% end %>
+
+<h2>Cancelled</h2>
+<% @cancelled_todos.each do |todo| %>
+  <div>
+    <h3><%= link_to todo.title, todo_path(todo) %></h3>
+    <p><%= todo.description %></p>
+    <span>Cancelled</span>
+
+    <%= button_to "Restore", restore_todo_path(todo), method: :patch %>
   </div>
 <% end %>

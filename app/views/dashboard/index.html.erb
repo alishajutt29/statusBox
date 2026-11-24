@@ -1,2 +1,70 @@
-<h1>Dashboard#index</h1>
-<p>Find me in app/views/dashboard/index.html.erb</p>
+
+<div class="dashboard">
+
+  <header class="dashboard-header">
+    <div>
+      <p class="eyebrow">YOUR WORKSPACE</p>
+      <h1>Welcome to statusBox.</h1>
+      <p class="subtitle">Stay organized. Get things done.</p>
+    </div>
+
+    <%= link_to "+ New Todo", new_todo_path, class: "primary-btn" %>
+  </header>
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <p>Pending Tasks</p>
+      <h2><%= current_user.todos.where(status: "pending").count %></h2>
+      <span>Tasks waiting for you</span>
+    </div>
+
+    <div class="stat-card dark-card">
+      <p>Completed Tasks</p>
+      <h2><%= current_user.todos.where(status: "completed").count %></h2>
+      <span>Tasks completed</span>
+    </div>
+
+    <div class="stat-card">
+      <p>Cancelled Tasks</p>
+      <h2><%= current_user.todos.where(status: "cancelled").count %></h2>
+      <span>Tasks cancelled</span>
+    </div>
+  </section>
+
+  <section class="recent-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">YOUR ACTIVITY</p>
+        <h2>Recent Todos</h2>
+      </div>
+
+      <%= link_to "View all →", todos_path, class: "view-link" %>
+    </div>
+
+    <% recent_todos = current_user.todos.order(created_at: :desc).limit(5) %>
+
+    <% if recent_todos.any? %>
+      <div class="recent-list">
+        <% recent_todos.each do |todo| %>
+          <div class="recent-item">
+            <div>
+              <h3><%= link_to todo.title, todo_path(todo) %></h3>
+              <p><%= todo.description.presence || "No description" %></p>
+            </div>
+
+            <span class="status-badge <%= todo.status %>">
+              <%= todo.status.capitalize %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <h3>No todos yet</h3>
+        <p>Create your first todo and start organizing your work.</p>
+        <%= link_to "Create your first todo", new_todo_path, class: "primary-btn" %>
+      </div>
+    <% end %>
+  </section>
+
+</div>

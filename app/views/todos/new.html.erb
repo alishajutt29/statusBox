@@ -1,33 +1,38 @@
-<h1>New Todo</h1>
 
-<%= form_with model: @todo do |form| %>
-  <% if @todo.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@todo.errors.count, "error") %> prohibited this todo from being saved:</h2>
-      <ul>
-        <% @todo.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<div class="todo-form-page">
+  <div class="todo-form-card">
+    <p class="eyebrow">YOUR WORKSPACE</p>
+    <h1>Create a New Todo</h1>
+    <p class="form-subtitle">Add a task and keep your work organized.</p>
 
-  <div>
-    <%= form.label :title %>
-    <%= form.text_field :title %>
+    <%= form_with model: @todo, class: "todo-form" do |form| %>
+      <% if @todo.errors.any? %>
+        <div class="form-errors">
+          <% @todo.errors.full_messages.each do |message| %>
+            <p><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :title, "Task Title" %>
+        <%= form.text_field :title, placeholder: "What needs to be done?" %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :description %>
+        <%= form.text_area :description, rows: 5, placeholder: "Add some details..." %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :status %>
+        <%= form.select :status, ["pending", "completed", "cancelled"] %>
+      </div>
+
+      <div class="form-actions">
+        <%= form.submit "Create Todo", class: "primary-btn" %>
+        <%= link_to "Cancel", todos_path, class: "back-btn" %>
+      </div>
+    <% end %>
   </div>
-
-  <div>
-    <%= form.label :description %>
-    <%= form.text_area :description %>
-  </div>
-
-  <div>
-    <%= form.label :status %>
-    <%= form.select :status, ["pending", "completed", "cancelled"] %>
-  </div>
-
-  <%= form.submit "Create Todo" %>
-<% end %>
-
-<%= link_to "Back", todos_path %>
+</div>

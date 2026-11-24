@@ -1,40 +1,63 @@
 
-<h1>My Todos</h1>
+<div class="todos-page">
 
-<%= link_to "New Todo", new_todo_path %>
+  <header class="todos-header">
+    <div>
+      <p class="eyebrow">YOUR WORKSPACE</p>
+      <h1>My Todos</h1>
+      <p class="todos-subtitle">Manage your tasks in one place.</p>
+    </div>
 
-<h2>Pending</h2>
-<% @pending_todos.each do |todo| %>
-  <div>
-    <h3><%= link_to todo.title, todo_path(todo) %></h3>
-    <p><%= todo.description %></p>
-    <span>Pending</span>
+    <%= link_to "+ New Todo", new_todo_path, class: "primary-btn" %>
+  </header>
 
-    <%= button_to "Complete", complete_todo_path(todo), method: :patch %>
-    <%= button_to "Cancel", cancel_todo_path(todo), method: :patch %>
-    <%= link_to "Edit", edit_todo_path(todo) %>
-    <%= button_to "Delete", todo_path(todo), method: :delete %>
-  </div>
-<% end %>
+  <% sections = [
+    ["Pending", @pending_todos, "pending"],
+    ["Completed", @completed_todos, "completed"],
+    ["Cancelled", @cancelled_todos, "cancelled"]
+  ] %>
 
-<h2>Completed</h2>
-<% @completed_todos.each do |todo| %>
-  <div>
-    <h3><%= link_to todo.title, todo_path(todo) %></h3>
-    <p><%= todo.description %></p>
-    <span>Completed</span>
+  <% sections.each do |heading, todos, status| %>
+    <section class="todo-section">
+      <div class="todo-section-heading">
+        <h2><%= heading %></h2>
+        <span class="section-count"><%= todos.count %></span>
+      </div>
 
-    <%= button_to "Restore", restore_todo_path(todo), method: :patch %>
-  </div>
-<% end %>
+      <% if todos.any? %>
+        <div class="todo-grid">
+          <% todos.each do |todo| %>
+            <div class="todo-card">
+              <div class="todo-card-top">
+                <span class="status-badge <%= status %>">
+                  <%= status.capitalize %>
+                </span>
+              </div>
 
-<h2>Cancelled</h2>
-<% @cancelled_todos.each do |todo| %>
-  <div>
-    <h3><%= link_to todo.title, todo_path(todo) %></h3>
-    <p><%= todo.description %></p>
-    <span>Cancelled</span>
+              <h3><%= link_to todo.title, todo_path(todo) %></h3>
+              <p class="todo-description">
+                <%= todo.description.presence || "No description added." %>
+              </p>
 
-    <%= button_to "Restore", restore_todo_path(todo), method: :patch %>
-  </div>
-<% end %>
+              <div class="todo-actions">
+                <% if status == "pending" %>
+                  <%= button_to "Complete", complete_todo_path(todo), method: :patch, class: "action-btn dark-action" %>
+                  <%= button_to "Cancel", cancel_todo_path(todo), method: :patch, class: "action-btn" %>
+                  <%= link_to "Edit", edit_todo_path(todo), class: "action-btn" %>
+                  <%= button_to "Delete", todo_path(todo), method: :delete, class: "action-btn" %>
+                <% else %>
+                  <%= button_to "Restore", restore_todo_path(todo), method: :patch, class: "action-btn dark-action" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="todo-empty">
+          No <%= heading.downcase %> tasks yet.
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+
+</div>

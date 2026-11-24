@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Status Box" %></title>
+    <title>statusBox</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Status Box">
-    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <nav class="navbar">
+      <%= link_to root_path, class: "nav-logo" do %>
+        <span class="nav-logo-mark" aria-hidden="true">S</span>
+        <span class="nav-logo-text">statusBox</span>
+      <% end %>
+
+      <div class="nav-links">
+        <% if authenticated? %>
+          <%= link_to "Dashboard", root_path, class: "nav-link#{' is-active' if current_page?(root_path)}" %>
+          <%= link_to "My Todos", todos_path, class: "nav-link#{' is-active' if current_page?(todos_path)}" %>
+          <%= button_to "Logout", session_path, method: :delete, class: "logout-btn" %>
+        <% else %>
+          <%= link_to "Sign In", new_session_path, class: "nav-link nav-link-outline" %>
+          <%= link_to "Sign Up", new_registration_path, class: "signup-btn" %>
+        <% end %>
+      </div>
+    </nav>
+
+    <main>
+      <%= yield %>
+    </main>
   </body>
 </html>

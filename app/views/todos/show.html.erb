@@ -1,7 +1,21 @@
-<h1><%= @todo.title %></h1>
 
-<p><%= @todo.description %></p>
-<p>Status: <%= @todo.status %></p>
+<div class="todo-detail-page">
+  <div class="todo-detail-card">
+    <p class="eyebrow">TASK DETAILS</p>
 
-<%= link_to "Back", todos_path %>
-<%= link_to "Edit", edit_todo_path(@todo) %>
+    <span class="status-badge <%= @todo.status %>">
+      <%= @todo.status.capitalize %>
+    </span>
+
+    <h1><%= @todo.title %></h1>
+
+    <p class="todo-detail-description">
+      <%= @todo.description.presence || "No description added." %>
+    </p>
+
+    <div class="todo-detail-actions">
+      <%= link_to "← Back to Todos", todos_path, class: "action-btn" %>
+      <%= link_to "Edit Todo", edit_todo_path(@todo), class: "primary-btn" %>
+    </div>
+  </div>
+</div>

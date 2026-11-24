@@ -1,0 +1,37 @@
+
+<div class="auth-page">
+  <div class="auth-card">
+    <p class="eyebrow">GET STARTED</p>
+    <h1>Create your account.</h1>
+    <p class="auth-subtitle">Start organizing your work with statusBox.</p>
+
+    <%= form_with model: @user, url: registrations_path, class: "todo-form" do |form| %>
+      <% if @user.errors.any? %>
+        <div class="form-errors">
+          <% @user.errors.full_messages.each do |message| %>
+            <p><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="form-field">
+        <%= form.label :email_address, "Email Address" %>
+        <%= form.email_field :email_address, required: true, placeholder: "Enter your email" %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :password %>
+        <%= form.password_field :password, required: true, placeholder: "Create a password" %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :password_confirmation, "Confirm Password" %>
+        <%= form.password_field :password_confirmation, required: true, placeholder: "Confirm your password" %>
+      </div>
+
+      <%= form.submit "Create Account", class: "primary-btn" %>
+    <% end %>
+
+    <%= link_to "Already have an account? Sign in", new_session_path, class: "auth-link" %>
+  </div>
+</div>
